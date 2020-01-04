@@ -17,3 +17,10 @@ source ~/Projects/envs/cli-scraper/bin/activate
 ```shell script
 pip install -r requirements/dev.txt
 ```
+
+---
+
+загрузка страницы с командами
+```shell script
+python -m scraper fetch https://www.fifa.com/worldcup/teams/ > worldcup.html
+```
