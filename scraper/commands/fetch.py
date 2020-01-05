@@ -5,7 +5,7 @@ import requests
 from scraper.exceptions import UsageError
 
 
-def fetch(args):
+def execute(args):
     if args.url:
         resp = requests.get(args.url)
         resp.raise_for_status()
