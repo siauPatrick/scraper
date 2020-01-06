@@ -1,3 +1,8 @@
+from scraper.spiders import crawl
+
+
+START_URL = 'https://www.fifa.com/worldcup/teams/'
+
+
 def execute(args):
-    output_format = args.format
-    print(f'output_format: {output_format}')
+    crawl.execute(START_URL)
