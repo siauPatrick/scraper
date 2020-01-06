@@ -11,7 +11,6 @@ def execute(start_url):
 
     while urls:
         url, callback = urls.popleft()
-        print(url)
         resp = requests.get(url)
         resp.raise_for_status()
 

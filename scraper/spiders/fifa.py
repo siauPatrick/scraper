@@ -4,6 +4,10 @@ import lxml.html
 import requests
 
 
+BASE_URL = 'https://www.fifa.com'
+START_URL = BASE_URL + '/worldcup/teams/'
+
+
 def parse(response: requests.Response):
     """
     doc.cssselect('a[href].fi-team-card')
@@ -12,7 +16,7 @@ def parse(response: requests.Response):
     doc.make_links_absolute('https://www.fifa.com')
     team_urls = doc.xpath('//a[contains(@class, "fi-team-card")]/@href')
 
-    return [(url, _parse_team) for url in team_urls[:2]]
+    return [(url, _parse_team) for url in team_urls]
 
 
 def _parse_team(response: requests.Response):
