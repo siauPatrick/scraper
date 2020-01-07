@@ -1,4 +1,3 @@
-import sys
 from datetime import datetime
 
 import lxml.html
@@ -7,8 +6,8 @@ import requests
 from scraper.spiders import crawl
 
 
-BASE_URL = 'https://www.fifa.com'
-START_URL = BASE_URL + '/worldcup/teams/'
+START_URL = 'https://www.fifa.com/worldcup/players/_libraries/byposition/all/_players-list'
+PLAYER_URL_TPL = 'https://www.fifa.com/worldcup/_libraries/players/player/{player_id}/_player-profile-data'
 
 
 def execute(out_path, out_format):
@@ -17,40 +16,31 @@ def execute(out_path, out_format):
 
 def parse(response: requests.Response):
     """
-    doc.cssselect('a[href].fi-team-card')
+    doc.cssselect('a[href].fi-p--link')
     """
     doc = lxml.html.fromstring(response.text)
-    doc.make_links_absolute('https://www.fifa.com')
-    team_urls = doc.xpath('//a[contains(@class, "fi-team-card")]/@href')
+    player_urls = doc.xpath('//a[@data-player-id]/@href')
+    player_ids = [url.split('/')[-2] for url in player_urls]
 
-    return [(url, _parse_team) for url in team_urls]
-
-
-def _parse_team(response: requests.Response):
-    """
-    doc.cssselect('.fi-p__n>a')
-    doc.cssselect('div#team-players-by-browser a.fi-p--link')
-    """
-    doc = lxml.html.fromstring(response.text)
-    doc.make_links_absolute('https://www.fifa.com')
-    player_urls = doc.xpath('//div[@class="fi-p__n"]/a/@href')
-    player_url_tpl = 'https://www.fifa.com/worldcup/_libraries/players/player/{}/_player-profile-data'
-
-    return [(player_url_tpl.format(url.split('/')[-2]), _parse_player) for url in player_urls if 'coach' not in url]
+    return [(PLAYER_URL_TPL.format(player_id=player_id), _parse_player) for player_id in player_ids]
 
 
 def _parse_player(response: requests.Response):
     doc = lxml.html.fromstring(response.text)
-    item = dict.fromkeys(['name', 'team_country', 'role', 'age', 'height_cm', 'international_caps',
-                          'international_goals', 'date_of_birth', 'country'])
+    item = dict.fromkeys(['name', 'jersey_number', 'country', 'role', 'age', 'height_cm',
+                          'international_caps', 'international_goals', 'date_of_birth'])
 
     name_items = doc.xpath('//div[@class="fi-p__name"]/text()')
     assert len(name_items) == 1, f'len(name_items): {len(name_items)}'
     item['name'] = name_items[0].strip().title()
 
+    jersey_number_items = doc.xpath('//span[@class="fi-p__num"]/text()')
+    assert len(jersey_number_items) == 1, f'len(jersey_number_items): {len(jersey_number_items)}'
+    item['jersey_number'] = int(jersey_number_items[0].strip())
+
     country_items = doc.xpath('//div[@class="fi-p__country"]/text()')
     assert len(country_items) == 1, f'len(country_items): {len(country_items)}'
-    item['team_country'] = country_items[0].strip()
+    item['country'] = country_items[0].strip()
 
     role_items = doc.xpath('//div[@class="fi-p__role"]/text()')
     assert len(role_items) == 1, f'len(role_items): {len(country_items)}'

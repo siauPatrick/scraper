@@ -1,7 +1,6 @@
 import csv
 import json
 import sys
-import typing
 from collections import deque
 
 import requests
@@ -23,7 +22,7 @@ def execute(start_url, callback, out_path, out_format):
                 if isinstance(result, dict):
                     out_writer(result)
                 elif isinstance(result, tuple) and len(result) == 2:
-                    urls.appendleft(result)
+                    urls.append(result)
     finally:
         out_file.close()
 
