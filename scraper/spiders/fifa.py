@@ -29,12 +29,14 @@ def parse(response: requests.Response):
 def _parse_team(response: requests.Response):
     """
     doc.cssselect('.fi-p__n>a')
+    doc.cssselect('div#team-players-by-browser a.fi-p--link')
     """
     doc = lxml.html.fromstring(response.text)
     doc.make_links_absolute('https://www.fifa.com')
     player_urls = doc.xpath('//div[@class="fi-p__n"]/a/@href')
+    player_url_tpl = 'https://www.fifa.com/worldcup/_libraries/players/player/{}/_player-profile-data'
 
-    return [(f'{url}profile/', _parse_player) for url in player_urls]
+    return [(player_url_tpl.format(url.split('/')[-2]), _parse_player) for url in player_urls if 'coach' not in url]
 
 
 def _parse_player(response: requests.Response):
