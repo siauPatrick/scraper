@@ -9,19 +9,23 @@ import requests
 
 def execute(start_url, callback, out_path, out_format):
     urls = deque([(start_url, callback)])
-    out_file = sys.stdout
+
+    out_file = sys.stdout if out_path == '-' else open(out_path, 'w', buffering=1)
     out_writer = _writer(out_file, out_format)
 
-    while urls:
-        url, callback = urls.popleft()
-        resp = requests.get(url)
-        resp.raise_for_status()
+    try:
+        while urls:
+            url, callback = urls.popleft()
+            resp = requests.get(url)
+            resp.raise_for_status()
 
-        for result in callback(resp):
-            if isinstance(result, dict):
-                out_writer(result)
-            elif isinstance(result, tuple) and len(result) == 2:
-                urls.appendleft(result)
+            for result in callback(resp):
+                if isinstance(result, dict):
+                    out_writer(result)
+                elif isinstance(result, tuple) and len(result) == 2:
+                    urls.appendleft(result)
+    finally:
+        out_file.close()
 
 
 def _writer(out_file, out_format):
