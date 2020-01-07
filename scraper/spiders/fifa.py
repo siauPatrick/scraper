@@ -1,11 +1,18 @@
+import sys
 from datetime import datetime
 
 import lxml.html
 import requests
 
+from scraper.spiders import crawl
+
 
 BASE_URL = 'https://www.fifa.com'
 START_URL = BASE_URL + '/worldcup/teams/'
+
+
+def execute():
+    crawl.execute(START_URL, parse, sys.stdout)
 
 
 def parse(response: requests.Response):
@@ -67,7 +74,7 @@ def _parse_player(response: requests.Response):
         text_val = text_items[0].strip()
 
         if text == 'date_of_birth':
-            text_val = datetime.strptime(text_val, "%d %B %Y").date()
+            text_val = datetime.strptime(text_val, "%d %B %Y").date().isoformat()
 
         item[text] = text_val
 
