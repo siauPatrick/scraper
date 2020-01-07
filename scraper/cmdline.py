@@ -12,13 +12,10 @@ def execute():
     parser_fetch.set_defaults(func=fetch.execute)
 
     parser_crawl = subparsers.add_parser('crawl')
-    parser_crawl.add_argument(
-        '-f',
-        '--format',
-        default='csv',
-        choices=['csv', 'jl'],
-        help='format of output file',
-    )
+    parser_crawl.add_argument('-o', '--outfile', metavar='FILE', default='-',
+                              help='dump scraped items into FILE (use - for stdout)')
+    parser_crawl.add_argument('-f', '--format', default='csv', choices=['csv', 'jl'],
+                              help='format to use for dumping items with -o')
     parser_crawl.set_defaults(func=crawl.execute)
 
     args = parser.parse_args()

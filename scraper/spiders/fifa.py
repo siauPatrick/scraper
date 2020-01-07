@@ -11,8 +11,8 @@ BASE_URL = 'https://www.fifa.com'
 START_URL = BASE_URL + '/worldcup/teams/'
 
 
-def execute():
-    crawl.execute(START_URL, parse, sys.stdout)
+def execute(out_path, out_format):
+    crawl.execute(START_URL, parse, out_path, out_format)
 
 
 def parse(response: requests.Response):
@@ -39,7 +39,8 @@ def _parse_team(response: requests.Response):
 
 def _parse_player(response: requests.Response):
     doc = lxml.html.fromstring(response.text)
-    item = {}
+    item = dict.fromkeys(['name', 'team_country', 'role', 'age', 'height_cm', 'international_caps',
+                          'international_goals', 'date_of_birth', 'country'])
 
     name_items = doc.xpath('//div[@class="fi-p__name"]/text()')
     assert len(name_items) == 1, f'len(name_items): {len(name_items)}'
