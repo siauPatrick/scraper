@@ -64,20 +64,24 @@ def _extract_first_val(items):
     return items[0].strip()
 
 
-def _extract_numbers(doc):
-    numbers = {}
+def _extract_info(doc, list_xpath, value_xpath):
+    values = {}
 
-    for el in info_number_xpath(doc):
-        info_number = _extract_first_val(number_xpath(el))
+    for el in list_xpath(doc):
+        value = _extract_first_val(value_xpath(el))
         label = el.text.strip().lower().replace(' ', '_')
 
-        if label == LABEL_HEIGHT:
-            info_number, _ = info_number.split()
-            numbers[label] = float(info_number)
-        else:
-            numbers[label] = int(info_number)
+        values[label] = value
 
-    return numbers
+    return values
+
+
+def _extract_numbers(doc):
+    info = _extract_info(doc, info_number_xpath, number_xpath)
+    height, _ = info.pop(LABEL_HEIGHT).split()
+    int_numbers = {k: int(v) for k, v in info.items()}
+
+    return {LABEL_HEIGHT: height, **int_numbers}
 
 
 def _extract_texts(doc):
