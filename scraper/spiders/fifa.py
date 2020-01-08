@@ -61,6 +61,13 @@ def _parse_player(response: requests.Response):
     jersey_number = _extract_first_val(jersey_number_xpath(doc))
     item['jersey_number'] = int(jersey_number)
 
+    _fill_numbers(item, doc)
+    _fill_texts(item, doc)
+
+    return [item]
+
+
+def _fill_numbers(item, doc):
     for el in info_number_xpath(doc):
         info_number = _extract_first_val(number_xpath(el))
         label = el.text.strip().lower().replace(' ', '_')
@@ -71,6 +78,8 @@ def _parse_player(response: requests.Response):
         else:
             item[label] = int(info_number)
 
+
+def _fill_texts(item, doc):
     for el in info_text_xpath(doc):
         info_text = _extract_first_val(text_xpath(el))
         label = el.text.strip().lower().replace(' ', '_')
@@ -79,5 +88,3 @@ def _parse_player(response: requests.Response):
             info_text = datetime.strptime(info_text, DATE_OF_BIRTH_FORMAT).date().isoformat()
 
         item[label] = info_text
-
-    return [item]
