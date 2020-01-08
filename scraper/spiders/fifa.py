@@ -4,7 +4,7 @@ import lxml.html
 import requests
 from lxml.etree import XPath
 
-from scraper.spiders import crawl
+from scraper import crawler
 
 
 # url constants
@@ -30,13 +30,10 @@ text_xpath = XPath('span/text()')
 
 
 def execute(out_path, out_format):
-    crawl.execute(START_URL, parse, out_path, out_format)
+    crawler.execute(START_URL, parse, out_path, out_format)
 
 
 def parse(response: requests.Response):
-    """
-    doc.cssselect('a[href].fi-p--link')
-    """
     doc = lxml.html.fromstring(response.text)
     player_urls = doc.xpath('//a[@data-player-id]/@href')
     player_ids = [url.split('/')[-2] for url in player_urls]
@@ -56,8 +53,8 @@ def _parse_player(response: requests.Response):
     jersey_number = _extract_first_val(jersey_number_xpath(doc))
     item['jersey_number'] = int(jersey_number)
 
-    _fill_numbers(item, doc)
-    _fill_texts(item, doc)
+    item.update(_extract_numbers(doc))
+    item.update(_extract_texts(doc))
 
     return [item]
 
@@ -67,19 +64,25 @@ def _extract_first_val(items):
     return items[0].strip()
 
 
-def _fill_numbers(item, doc):
+def _extract_numbers(doc):
+    numbers = {}
+
     for el in info_number_xpath(doc):
         info_number = _extract_first_val(number_xpath(el))
         label = el.text.strip().lower().replace(' ', '_')
 
         if label == LABEL_HEIGHT:
             info_number, _ = info_number.split()
-            item[label] = float(info_number)
+            numbers[label] = float(info_number)
         else:
-            item[label] = int(info_number)
+            numbers[label] = int(info_number)
+
+    return numbers
 
 
-def _fill_texts(item, doc):
+def _extract_texts(doc):
+    texts = {}
+
     for el in info_text_xpath(doc):
         info_text = _extract_first_val(text_xpath(el))
         label = el.text.strip().lower().replace(' ', '_')
@@ -87,4 +90,6 @@ def _fill_texts(item, doc):
         if label == LABEL_DATE_OF_BIRTH:
             info_text = datetime.strptime(info_text, DATE_OF_BIRTH_FORMAT).date().isoformat()
 
-        item[label] = info_text
+        texts[label] = info_text
+
+    return texts

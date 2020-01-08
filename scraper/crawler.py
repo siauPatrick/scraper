@@ -6,10 +6,15 @@ from collections import deque
 import requests
 
 
+FORMAT_CSV = 'csv'
+FORMAT_JL = 'jl'
+SIGN_STDOUT = '-'
+
+
 def execute(start_url, callback, out_path, out_format):
     urls = deque([(start_url, callback)])
 
-    out_file = sys.stdout if out_path == '-' else open(out_path, 'w', buffering=1)
+    out_file = sys.stdout if out_path == SIGN_STDOUT else open(out_path, 'w', buffering=1)
     out_writer = _writer(out_file, out_format)
 
     try:
@@ -42,7 +47,7 @@ def _writer(out_file, out_format):
 
         csv_writer.writerow(row)
 
-    if out_format == 'csv':
+    if out_format == FORMAT_CSV:
         return _write_csv
-    elif out_format == 'jl':
+    elif out_format == FORMAT_JL:
         return _write_jl
