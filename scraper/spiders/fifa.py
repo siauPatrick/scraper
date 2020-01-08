@@ -44,11 +44,6 @@ def parse(response: requests.Response):
     return [(PLAYER_URL_TPL.format(player_id=player_id), _parse_player) for player_id in player_ids]
 
 
-def _extract_first_val(items):
-    assert len(items) == 1, f'len(items): {len(items)}'
-    return items[0].strip()
-
-
 def _parse_player(response: requests.Response):
     doc = lxml.html.fromstring(response.text)
     item = dict.fromkeys(['name', 'jersey_number', 'country', 'role', 'age', 'height',
@@ -65,6 +60,11 @@ def _parse_player(response: requests.Response):
     _fill_texts(item, doc)
 
     return [item]
+
+
+def _extract_first_val(items):
+    assert len(items) == 1, f'len(items): {len(items)}'
+    return items[0].strip()
 
 
 def _fill_numbers(item, doc):
