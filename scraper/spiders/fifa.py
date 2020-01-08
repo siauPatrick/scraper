@@ -81,19 +81,12 @@ def _extract_numbers(doc):
     height, _ = info.pop(LABEL_HEIGHT).split()
     int_numbers = {k: int(v) for k, v in info.items()}
 
-    return {LABEL_HEIGHT: height, **int_numbers}
+    return {LABEL_HEIGHT: float(height), **int_numbers}
 
 
 def _extract_texts(doc):
-    texts = {}
+    info = _extract_info(doc, info_text_xpath, text_xpath)
+    date_of_birth = datetime.strptime(info[LABEL_DATE_OF_BIRTH], DATE_OF_BIRTH_FORMAT).date()
+    info[LABEL_DATE_OF_BIRTH] = date_of_birth.isoformat()
 
-    for el in info_text_xpath(doc):
-        info_text = _extract_first_val(text_xpath(el))
-        label = el.text.strip().lower().replace(' ', '_')
-
-        if label == LABEL_DATE_OF_BIRTH:
-            info_text = datetime.strptime(info_text, DATE_OF_BIRTH_FORMAT).date().isoformat()
-
-        texts[label] = info_text
-
-    return texts
+    return info
