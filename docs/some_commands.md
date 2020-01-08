@@ -22,5 +22,10 @@ pip install -r requirements/dev.txt
 
 загрузка страницы с командами
 ```shell script
-python -m scraper fetch https://www.fifa.com/worldcup/teams/ > worldcup.html
+python -m scraper fetch https://www.fifa.com/worldcup/teams/ > scraped/worldcup.html
+```
+
+запуск скрейпера
+```shell script
+python -m scraper crawl -f csv -o scraped/fifa.csv
 ```
