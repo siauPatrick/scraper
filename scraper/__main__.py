@@ -1,5 +1,5 @@
-from scraper.cmdline import execute
+from scraper.cmdline import parse
 
 
 if __name__ == '__main__':
-    execute()
+    parse()
