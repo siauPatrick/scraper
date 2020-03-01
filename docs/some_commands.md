@@ -29,3 +29,13 @@ python -m scraper fetch https://www.fifa.com/worldcup/teams/ > scraped/worldcup.
 ```shell script
 python -m scraper crawl -f csv -o scraped/fifa.csv
 ```
+
+XPath в браузере
+```javascript
+$x('//a[text()="Next Page"]')
+```
+
+CSS-query в браузере
+```javascript
+document.querySelector('.pagination a')
+```
