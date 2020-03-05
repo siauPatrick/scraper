@@ -3,6 +3,7 @@ from parsel import Selector
 
 
 BASE_URL = 'https://www.fifaindex.com'
+START_URL = BASE_URL + '/players/fifa18wc/'
 
 
 def parse(resp: requests.Response):
@@ -31,5 +32,4 @@ def parse_player(resp: requests.Response):
         val_str = card.xpath(metric_xpath).get().split()[0]
         player[name.lower()] = int(val_str)
 
-    print(player)
-    return []
+    return [player]

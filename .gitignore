@@ -3,3 +3,4 @@
 __pycache__/
 scraped/
 *.pyc
+env/
