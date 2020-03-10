@@ -11,15 +11,10 @@ pip install -r requirements/dev.txt
 ```
 
 ### Commands
-Загрузить `URL` и вывести результат в `stdout`
-```shell script
-python -m scraper fetch <url>
-```
-
 Запуск краулера
 ```shell script
 python -m scraper crawl [options]
 ```
 &nbsp;&nbsp;&nbsp;&nbsp;Supported options:
   - ```--outfile=FILE``` or ```-o FILE```: файл, в который будут сохранены собранные данные
-  - ```--format=FORMAT``` or ```-f FORMAT```: формат файла с собранными данными {csv, jl}
+  - ```--format=FORMAT``` or ```-f FORMAT```: формат файла с собранными данными {csv, jl} (csv - домашняя работа)
